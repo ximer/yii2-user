@@ -1,4 +1,5 @@
 <?php
+/*test*/
 /*
  * This file is part of the Dektrium project.
  *
