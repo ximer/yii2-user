@@ -1,5 +1,5 @@
 <?php
-
+var_dump();
 /*
  * This file is part of the Dektrium project.
  *
