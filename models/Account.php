@@ -1,5 +1,4 @@
 <?php
-var_dump();
 /*
  * This file is part of the Dektrium project.
  *
@@ -125,6 +124,8 @@ class Account extends ActiveRecord
             'provider'   => $client->getId(),
             'client_id'  => $client->getUserAttributes()['id'],
             'data'       => json_encode($client->getUserAttributes()),
+            'token'         => $client->getAccessToken()->getToken(),
+            'token_secret'  => $client->getAccessToken()->getTokenSecret(),
         ]);
 
         if ($client instanceof ClientInterface) {
@@ -180,10 +181,12 @@ class Account extends ActiveRecord
 
         if (null === $account) {
             $account = Yii::createObject([
-                'class'      => static::className(),
-                'provider'   => $client->getId(),
-                'client_id'  => $client->getUserAttributes()['id'],
-                'data'       => json_encode($client->getUserAttributes()),
+                'class'         => static::className(),
+                'provider'      => $client->getId(),
+                'client_id'     => $client->getUserAttributes()['id'],
+                'data'          => json_encode($client->getUserAttributes()),
+                'token'         => $client->getAccessToken()->getToken(),
+                'token_secret'  => $client->getAccessToken()->getTokenSecret(),
             ]);
             $account->save(false);
         }

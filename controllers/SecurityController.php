@@ -158,6 +158,7 @@ class SecurityController extends Controller
 
         if ($model->load(Yii::$app->getRequest()->post()) && $model->login()) {
             $this->trigger(self::EVENT_AFTER_LOGIN, $event);
+            Yii::$app->getSession()->setFlash('login', 'login');
             return $this->goBack();
         }
 
