@@ -40,7 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 <?= $form->field($model, 'email') ?>
 
+                <?php /*
                 <?= $form->field($model, 'username') ?>
+                */ ?>
 
                 <?= Html::submitButton(Yii::t('user', 'Continue'), ['class' => 'btn btn-success btn-block']) ?>
 
