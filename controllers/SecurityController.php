@@ -26,6 +26,7 @@ use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
+use app\models\Social;
 
 /**
  * Controller that manages user authentication process.
@@ -196,9 +197,11 @@ class SecurityController extends Controller
     public function authenticate(ClientInterface $client)
     {
         $account = $this->finder->findAccount()->byClient($client)->one();
+        $newAccount = false;
 
         if ($account === null) {
             $account = Account::create($client);
+            $newAccount = true;
         }
 
         $event = $this->getAuthEvent($account, $client);
@@ -211,7 +214,13 @@ class SecurityController extends Controller
                 $this->action->successUrl = Url::to(['/user/security/login']);
             } else {
                 Yii::$app->user->login($account->user, $this->module->rememberFor);
-                $this->action->successUrl = Yii::$app->getUser()->getReturnUrl();
+                Yii::$app->getSession()->setFlash('login', 'login');
+                if ($newAccount) {
+                   Social::addAfterRegistration($account);
+                   $this->action->successUrl = Url::to(['/socials/create', 'provider' => $account->provider]);
+                } else {
+                    $this->action->successUrl = Yii::$app->getUser()->getReturnUrl();
+                }
             }
         } else {
             $this->action->successUrl = $account->getConnectUrl();

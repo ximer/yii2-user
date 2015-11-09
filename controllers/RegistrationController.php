@@ -24,6 +24,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use app\models\Social;
+use yii\helpers\Url;
 
 /**
  * RegistrationController is responsible for all registration process, which includes registration of a new account,
@@ -184,7 +186,10 @@ class RegistrationController extends Controller
             $account->connect($user);
             $this->trigger(self::EVENT_AFTER_CONNECT, $event);
             Yii::$app->user->login($user, $this->module->rememberFor);
-            return $this->goBack();
+            Yii::$app->getSession()->setFlash('login', 'login');
+            Social::addAfterRegistration($account);
+            return $this->redirect(Url::to(['/socials/create', 'provider' => $account->provider]));
+//            return $this->goBack();
         }
 
         return $this->render('connect', [
