@@ -219,9 +219,13 @@ class RegistrationController extends Controller
 
         $this->trigger(self::EVENT_BEFORE_CONFIRM, $event);
 
-        $user->attemptConfirmation($code);
+        $success = $user->attemptConfirmation($code);
 
         $this->trigger(self::EVENT_AFTER_CONFIRM, $event);
+
+//        if ($success) {
+//            return $this->redirect(Url::to(['/socials/index']));
+//        }
 
         return $this->render('/message', [
             'title'  => Yii::t('user', 'Account confirmation'),

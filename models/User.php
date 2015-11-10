@@ -183,7 +183,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             'register' => ['username', 'email', 'password'],
-            'connect'  => ['username', 'email'],
+            'connect'  => ['username', 'email', 'password'],
             'create'   => ['username', 'email', 'password'],
             'update'   => ['username', 'email', 'password'],
             'settings' => ['username', 'email', 'password'],
@@ -195,11 +195,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             // username rules
-            'usernameRequired' => ['username', 'required', 'on' => ['register', 'create', 'connect', 'update']],
-            'usernameMatch'    => ['username', 'match', 'pattern' => static::$usernameRegexp],
-            'usernameLength'   => ['username', 'string', 'min' => 3, 'max' => 255],
-            'usernameUnique'   => ['username', 'unique', 'message' => Yii::t('user', 'This username has already been taken')],
-            'usernameTrim'     => ['username', 'trim'],
+            'usernameDefault' => ['username', 'default', 'value' => 'username'],
 
             // email rules
             'emailRequired' => ['email', 'required', 'on' => ['register', 'connect', 'create', 'update']],
@@ -209,10 +205,11 @@ class User extends ActiveRecord implements IdentityInterface
             'emailTrim'     => ['email', 'trim'],
 
             // password rules
-            'passwordRequired' => ['password', 'required', 'on' => ['register']],
-            'passwordLength'   => ['password', 'string', 'min' => 6, 'on' => ['register', 'create']],
+            'passwordRequired' => ['password', 'required', 'on' => ['register', 'connect']],
+            'passwordLength'   => ['password', 'string', 'min' => 6, 'on' => ['register', 'create', 'connect']],
         ];
     }
+
 
     /** @inheritdoc */
     public function validateAuthKey($authKey)
@@ -232,7 +229,7 @@ class User extends ActiveRecord implements IdentityInterface
         }
 
         $this->confirmed_at = time();
-        $this->password = $this->password == null ? Password::generate(8) : $this->password;
+//        $this->password = $this->password == null ? Password::generate(8) : $this->password;
 
         $this->trigger(self::BEFORE_CREATE);
 
@@ -240,7 +237,7 @@ class User extends ActiveRecord implements IdentityInterface
             return false;
         }
 
-        $this->mailer->sendWelcomeMessage($this, null, true);
+        $this->mailer->sendWelcomeMessage($this, null, false);
         $this->trigger(self::AFTER_CREATE);
 
         return true;
@@ -295,6 +292,7 @@ class User extends ActiveRecord implements IdentityInterface
             if (($success = $this->confirm())) {
                 Yii::$app->user->login($this, $this->module->rememberFor);
                 $message = Yii::t('user', 'Thank you, registration is now complete.');
+                Yii::$app->getSession()->setFlash('login', 'login');
             } else {
                 $message = Yii::t('user', 'Something went wrong and your account has not been confirmed.');
             }
