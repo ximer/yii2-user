@@ -126,6 +126,8 @@ class RegistrationController extends Controller
      */
     public function actionRegister()
     {
+        $this->layout = '/register';
+
         if (!$this->module->enableRegistration) {
             throw new NotFoundHttpException();
         }
