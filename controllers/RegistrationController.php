@@ -166,6 +166,8 @@ class RegistrationController extends Controller
      */
     public function actionConnect($code)
     {
+        $this->layout = '/register';
+
         $account = $this->finder->findAccount()->byCode($code)->one();
 
         if ($account === null || $account->getIsConnected()) {
