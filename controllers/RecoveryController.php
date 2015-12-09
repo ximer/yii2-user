@@ -33,6 +33,7 @@ class RecoveryController extends Controller
     use AjaxValidationTrait;
     use EventTrait;
 
+    public $layout = '/register';
     /**
      * Event is triggered before requesting password reset.
      * Triggered with \dektrium\user\events\FormEvent.

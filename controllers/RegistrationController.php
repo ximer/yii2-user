@@ -24,6 +24,8 @@ use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use app\models\Social;
+use yii\helpers\Url;
 
 /**
  * RegistrationController is responsible for all registration process, which includes registration of a new account,
@@ -124,6 +126,8 @@ class RegistrationController extends Controller
      */
     public function actionRegister()
     {
+        $this->layout = '/register';
+
         if (!$this->module->enableRegistration) {
             throw new NotFoundHttpException();
         }
@@ -162,6 +166,8 @@ class RegistrationController extends Controller
      */
     public function actionConnect($code)
     {
+        $this->layout = '/register';
+
         $account = $this->finder->findAccount()->byCode($code)->one();
 
         if ($account === null || $account->getIsConnected()) {
@@ -184,7 +190,10 @@ class RegistrationController extends Controller
             $account->connect($user);
             $this->trigger(self::EVENT_AFTER_CONNECT, $event);
             Yii::$app->user->login($user, $this->module->rememberFor);
-            return $this->goBack();
+            Yii::$app->getSession()->setFlash('login', 'login');
+            Social::addAfterRegistration($account);
+            return $this->redirect(Url::to(['/socials/create', 'provider' => $account->provider]));
+//            return $this->goBack();
         }
 
         return $this->render('connect', [
@@ -214,9 +223,13 @@ class RegistrationController extends Controller
 
         $this->trigger(self::EVENT_BEFORE_CONFIRM, $event);
 
-        $user->attemptConfirmation($code);
+        $success = $user->attemptConfirmation($code);
 
         $this->trigger(self::EVENT_AFTER_CONFIRM, $event);
+
+        if ($success) {
+            return $this->redirect(Url::to(['/socials/index']));
+        }
 
         return $this->render('/message', [
             'title'  => Yii::t('user', 'Account confirmation'),

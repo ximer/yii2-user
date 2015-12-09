@@ -1,4 +1,5 @@
 <?php
+/*test*/
 /*
  * This file is part of the Dektrium project.
  *
@@ -124,8 +125,8 @@ class Account extends ActiveRecord
             'provider'   => $client->getId(),
             'client_id'  => $client->getUserAttributes()['id'],
             'data'       => json_encode($client->getUserAttributes()),
-            'token'         => $client->getAccessToken()->getToken(),
-            'token_secret'  => $client->getAccessToken()->getTokenSecret(),
+//            'token'         => $client->getAccessToken()->getToken(),
+//            'token_secret'  => $client->getAccessToken()->getTokenSecret(),
         ]);
 
         if ($client instanceof ClientInterface) {
@@ -185,8 +186,8 @@ class Account extends ActiveRecord
                 'provider'      => $client->getId(),
                 'client_id'     => $client->getUserAttributes()['id'],
                 'data'          => json_encode($client->getUserAttributes()),
-                'token'         => $client->getAccessToken()->getToken(),
-                'token_secret'  => $client->getAccessToken()->getTokenSecret(),
+//                'token'         => $client->getAccessToken()->getToken(),
+//                'token_secret'  => $client->getAccessToken()->getTokenSecret(),
             ]);
             $account->save(false);
         }
