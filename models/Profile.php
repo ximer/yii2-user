@@ -31,6 +31,7 @@ use yii\db\ActiveRecord;
  */
 class Profile extends ActiveRecord
 {
+
     /** @var \dektrium\user\Module */
     protected $module;
 
@@ -52,6 +53,11 @@ class Profile extends ActiveRecord
     public function rules()
     {
         return [
+            [['firstname', 'lastname', 'mobile', 'street', 'city', 'state', 'zipcode'], 'string'],
+            [['firstname', 'lastname', 'mobile', 'street', 'city'], 'trim'],
+            [['firstname', 'lastname', 'mobile', 'street', 'city', 'state', 'zipcode'], 'required'],
+            ['zipcode', 'string', 'max' => 5],
+
             'bioString' => ['bio', 'string'],
             'publicEmailPattern' => ['public_email', 'email'],
             'gravatarEmailPattern' => ['gravatar_email', 'email'],
@@ -75,6 +81,16 @@ class Profile extends ActiveRecord
             'website'        => Yii::t('user', 'Website'),
             'bio'            => Yii::t('user', 'Bio'),
         ];
+    }
+
+    public function getFullName()
+    {
+        if ($this->firstname || $this->lastname) {
+            return $this->firstname . ' ' . $this->lastname;
+        } else {
+            return null;
+        }
+
     }
 
     /** @inheritdoc */
